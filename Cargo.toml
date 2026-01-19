@@ -1,0 +1,11 @@
+[package]
+name = "gottis"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+base58 = "0.2.0"
+borsh = { version = "1.6.0", features = ["derive"] }
+serde = { version = "1.0.228", features = ["derive"] }
+solana-pubkey = "=2.1.1"
+solana-transaction = "3.0.2"
