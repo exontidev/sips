@@ -8,14 +8,14 @@ use crate::{
     },
 };
 
-#[derive(BorshDeserialize, Serialize, Deserialize)]
+#[derive(BorshDeserialize, Serialize, Deserialize, Debug)]
 pub struct PumpMetadata {
     name: String,
     symbol: String,
     uri: Link,
 }
 
-#[derive(BorshDeserialize)]
+#[derive(BorshDeserialize, Debug)]
 pub struct PumpCreateInstruction {
     metadata: PumpMetadata
 }
@@ -31,7 +31,7 @@ impl RawInstruction<PumpCreateInstruction> for PumpCreateInstruction {
     const DISCRIMINATOR : &[u8] = &[24, 30, 200, 40, 5, 28, 7, 119];
 }
 
-#[derive(BorshDeserialize)]
+#[derive(BorshDeserialize, Debug)]
 pub struct PumpBuyInstruction {
     amount: u64,   // Token amount,
     slipapge: u64, // Max SOL payed
@@ -48,7 +48,7 @@ impl RawInstruction<PumpBuyInstruction> for PumpBuyInstruction {
     const DISCRIMINATOR : &[u8] = &[102, 6, 61, 18, 1, 218, 235, 234];
 }
 
-#[derive(BorshDeserialize)]
+#[derive(BorshDeserialize, Debug)]
 pub struct PumpSellInstruction {
     amount: u64,   // Token amount,
     slippage: u64, // Minimum SOL payout

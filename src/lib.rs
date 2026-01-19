@@ -1,2 +1,2 @@
-mod helper;
-mod instructions;
+pub mod helper;
+pub mod instructions;

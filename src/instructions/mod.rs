@@ -1,6 +1,6 @@
 mod error;
 mod pump;
 mod registry;
-mod events;
+pub mod events;
 mod raw_instruction;
 mod system_program;

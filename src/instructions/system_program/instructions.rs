@@ -2,7 +2,7 @@ use borsh::BorshDeserialize;
 
 use crate::instructions::{error::Error, events::Instruction, raw_instruction::RawInstruction};
 
-#[derive(BorshDeserialize)]
+#[derive(BorshDeserialize, Debug)]
 pub struct ComputeUnitLimit {
     limit : u32
 }
@@ -18,7 +18,7 @@ impl RawInstruction<ComputeUnitLimit> for ComputeUnitLimit {
     const DISCRIMINATOR : &'static [u8] = &[2];
 }
 
-#[derive(BorshDeserialize)]
+#[derive(BorshDeserialize, Debug)]
 pub struct ComputeUnitPrice {
     limit : u64
 }

@@ -7,6 +7,7 @@ use crate::{
     },
 };
 
+#[derive(Debug)]
 pub enum Instruction {
     ComputeLimit(ComputeUnitLimit),
     ComputePrice(ComputeUnitPrice),
@@ -19,7 +20,11 @@ impl Instruction {
     pub fn from_bytes(ix: &[u8]) -> Result<Instruction, Error> {
         for entry in REGISTRY {
             for instruction in entry.instructions{
-                return (instruction.parse)(ix);
+                let Ok(instruction) = (instruction.parse)(ix) else {
+                    continue;
+                };
+
+                return Ok(instruction);
             }
         }
 

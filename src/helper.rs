@@ -1,7 +1,7 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use serde::{Deserialize, Serialize};
 
-#[derive(BorshDeserialize, Serialize, Deserialize)]
+#[derive(BorshDeserialize, Serialize, Deserialize, Debug)]
 pub struct Link(pub String);
 #[derive(Serialize, Deserialize)]
 pub struct Base58Pubkey(pub String);

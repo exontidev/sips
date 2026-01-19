@@ -1,7 +1,7 @@
 use crate::{
     helper::AnchorDiscriminator,
     instructions::{
-        error::Error, events::Instruction, pump::instructions::{PumpBuyInstruction, PumpCreateInstruction, PumpSellInstruction}, raw_instruction::RawInstruction
+        error::Error, events::Instruction, pump::instructions::{PumpBuyInstruction, PumpCreateInstruction, PumpSellInstruction}, raw_instruction::RawInstruction, system_program::instructions::{ComputeUnitLimit, ComputeUnitPrice}
     },
 };
 
@@ -45,8 +45,8 @@ pub const REGISTRY: &[ProgramData] = &[
         program : Program::ComputeBudget,
 
         instructions : &[
-            Decoder::new(PumpCreateInstruction::DISCRIMINATOR, PumpCreateInstruction::instruction),
-            Decoder::new(PumpBuyInstruction::DISCRIMINATOR, PumpBuyInstruction::instruction),
+            Decoder::new(ComputeUnitLimit::DISCRIMINATOR, ComputeUnitLimit::instruction),
+            Decoder::new(ComputeUnitPrice::DISCRIMINATOR, ComputeUnitPrice::instruction),
         ]
     }
 ];
