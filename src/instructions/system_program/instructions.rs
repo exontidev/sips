@@ -1,35 +1,35 @@
 use borsh::BorshDeserialize;
 
-use crate::instructions::{error::Error, events::Instruction, raw_instruction::RawInstruction};
+use crate::instructions::{error::Error, instructions::Instruction, raw_instruction::RawSerializable};
 
 #[derive(BorshDeserialize, Debug)]
 pub struct ComputeUnitLimit {
-    limit : u32
+    limit: u32,
 }
 
 impl ComputeUnitLimit {
-    pub fn instruction(data : &[u8]) -> Result<Instruction, Error> {
+    pub fn instruction(data: &[u8]) -> Result<Instruction, Error> {
         let ix = Self::from_bytes(data)?;
-        Ok(Instruction::ComputeLimit(ix)) 
+        Ok(Instruction::ComputeLimit(ix))
     }
 }
 
-impl RawInstruction<ComputeUnitLimit> for ComputeUnitLimit {
-    const DISCRIMINATOR : &'static [u8] = &[2];
+impl RawSerializable<ComputeUnitLimit> for ComputeUnitLimit {
+    const DISCRIMINATOR: &'static [u8] = &[2];
 }
 
 #[derive(BorshDeserialize, Debug)]
 pub struct ComputeUnitPrice {
-    limit : u64
+    limit: u64,
 }
 
 impl ComputeUnitPrice {
-    pub fn instruction(data : &[u8]) -> Result<Instruction, Error> {
+    pub fn instruction(data: &[u8]) -> Result<Instruction, Error> {
         let ix = Self::from_bytes(data)?;
-        Ok(Instruction::ComputePrice(ix)) 
+        Ok(Instruction::ComputePrice(ix))
     }
 }
 
-impl RawInstruction<ComputeUnitPrice> for ComputeUnitPrice {
-    const DISCRIMINATOR : &'static [u8] = &[3];
+impl RawSerializable<ComputeUnitPrice> for ComputeUnitPrice {
+    const DISCRIMINATOR: &'static [u8] = &[3];
 }

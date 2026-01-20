@@ -1,2 +1,2 @@
-pub mod instructions;
 pub mod events;
+pub mod instructions;

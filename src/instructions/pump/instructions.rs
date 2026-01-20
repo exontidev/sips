@@ -2,10 +2,8 @@ use borsh::{BorshDeserialize, BorshSerialize};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    helper::Link,
-    instructions::{
-        error::Error, events::Instruction, raw_instruction::RawInstruction
-    },
+    helper::{Link, RawPubkey},
+    instructions::{error::Error, instructions::Instruction, raw_instruction::RawSerializable},
 };
 
 #[derive(BorshDeserialize, Serialize, Deserialize, Debug)]
@@ -17,18 +15,37 @@ pub struct PumpMetadata {
 
 #[derive(BorshDeserialize, Debug)]
 pub struct PumpCreateInstruction {
-    metadata: PumpMetadata
+    metadata: PumpMetadata,
+    creator: RawPubkey,
 }
 
 impl PumpCreateInstruction {
-    pub fn instruction(data : &[u8]) -> Result<Instruction, Error> {
+    pub fn instruction(data: &[u8]) -> Result<Instruction, Error> {
         let ix = Self::from_bytes(data)?;
-        Ok(Instruction::PumpCreate(ix)) 
+        Ok(Instruction::PumpCreate(ix))
     }
 }
 
-impl RawInstruction<PumpCreateInstruction> for PumpCreateInstruction {
-    const DISCRIMINATOR : &[u8] = &[24, 30, 200, 40, 5, 28, 7, 119];
+impl RawSerializable<PumpCreateInstruction> for PumpCreateInstruction {
+    const DISCRIMINATOR: &[u8] = &[24, 30, 200, 40, 5, 28, 7, 119];
+}
+
+#[derive(BorshDeserialize, Debug)]
+pub struct PumpCreateV2Instruction {
+    metadata: PumpMetadata,
+    creator: RawPubkey,
+    mayhem : bool
+}
+
+impl PumpCreateV2Instruction {
+    pub fn instruction(data: &[u8]) -> Result<Instruction, Error> {
+        let ix = Self::from_bytes(data)?;
+        Ok(Instruction::PumpCreateV2(ix))
+    }
+}
+
+impl RawSerializable<PumpCreateV2Instruction> for PumpCreateV2Instruction {
+    const DISCRIMINATOR: &[u8] = &[214, 144, 76, 236, 95, 139, 49, 180];
 }
 
 #[derive(BorshDeserialize, Debug)]
@@ -38,14 +55,14 @@ pub struct PumpBuyInstruction {
 }
 
 impl PumpBuyInstruction {
-    pub fn instruction(data : &[u8]) -> Result<Instruction, Error> {
+    pub fn instruction(data: &[u8]) -> Result<Instruction, Error> {
         let ix = Self::from_bytes(data)?;
-        Ok(Instruction::PumpBuy(ix)) 
+        Ok(Instruction::PumpBuy(ix))
     }
 }
 
-impl RawInstruction<PumpBuyInstruction> for PumpBuyInstruction {
-    const DISCRIMINATOR : &[u8] = &[102, 6, 61, 18, 1, 218, 235, 234];
+impl RawSerializable<PumpBuyInstruction> for PumpBuyInstruction {
+    const DISCRIMINATOR: &[u8] = &[102, 6, 61, 18, 1, 218, 235, 234];
 }
 
 #[derive(BorshDeserialize, Debug)]
@@ -55,12 +72,12 @@ pub struct PumpSellInstruction {
 }
 
 impl PumpSellInstruction {
-    pub fn instruction(data : &[u8]) -> Result<Instruction, Error> {
+    pub fn instruction(data: &[u8]) -> Result<Instruction, Error> {
         let ix = Self::from_bytes(data)?;
-        Ok(Instruction::PumpSell(ix)) 
+        Ok(Instruction::PumpSell(ix))
     }
 }
 
-impl RawInstruction<PumpSellInstruction> for PumpSellInstruction {
-    const DISCRIMINATOR : &[u8] = &[51, 230, 133, 164, 1, 127, 131, 173];
+impl RawSerializable<PumpSellInstruction> for PumpSellInstruction {
+    const DISCRIMINATOR: &[u8] = &[51, 230, 133, 164, 1, 127, 131, 173];
 }

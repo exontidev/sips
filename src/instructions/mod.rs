@@ -1,6 +1,8 @@
 mod error;
+mod instructions;
+pub use instructions::Instruction;
 mod pump;
-mod registry;
-pub mod events;
+pub use pump::instructions::PumpMetadata;
 mod raw_instruction;
+mod registry;
 mod system_program;
