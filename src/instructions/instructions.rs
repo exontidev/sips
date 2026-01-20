@@ -16,8 +16,6 @@ pub enum Instruction {
     PumpCreateV2(PumpCreateV2Instruction),
     PumpBuy(PumpBuyInstruction),
     PumpSell(PumpSellInstruction),
-
-    
 }
 
 impl Instruction {

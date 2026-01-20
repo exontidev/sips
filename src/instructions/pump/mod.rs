@@ -1,2 +1,2 @@
-pub mod events;
 pub mod instructions;
+pub mod accounts;
