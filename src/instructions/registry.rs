@@ -3,7 +3,9 @@ use crate::{
     instructions::{
         error::Error,
         instructions::Instruction,
-        pump::instructions::{PumpBuyInstruction, PumpCreateInstruction, PumpCreateV2Instruction, PumpSellInstruction},
+        pump::instructions::{
+            PumpBuyExactSolInInstruction, PumpBuyInstruction, PumpCreateInstruction, PumpCreateV2Instruction, PumpSellInstruction
+        },
         raw_instruction::RawSerializable,
         system_program::instructions::{ComputeUnitLimit, ComputeUnitPrice},
     },
@@ -43,15 +45,17 @@ pub const REGISTRY: &[ProgramData] = &[
                 PumpCreateInstruction::DISCRIMINATOR,
                 PumpCreateInstruction::instruction,
             ),
-
             Decoder::new(
                 PumpCreateV2Instruction::DISCRIMINATOR,
                 PumpCreateV2Instruction::instruction,
             ),
-
             Decoder::new(
                 PumpBuyInstruction::DISCRIMINATOR,
                 PumpBuyInstruction::instruction,
+            ),
+            Decoder::new(
+                PumpBuyExactSolInInstruction::DISCRIMINATOR,
+                PumpBuyExactSolInInstruction::instruction,
             ),
             Decoder::new(
                 PumpSellInstruction::DISCRIMINATOR,

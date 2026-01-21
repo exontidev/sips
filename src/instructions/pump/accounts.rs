@@ -15,7 +15,7 @@ pub enum CreateAccount {
     AssociatedTokenProgram,
     Rent,
     EventAuthority,
-    Program
+    Program,
 }
 
 #[repr(usize)]
@@ -34,7 +34,7 @@ pub enum CreateV2Account {
     SolVault,
     MayhemState,
     MayhemTokenVault,
-    EventAuthority
+    EventAuthority,
 }
 
 #[repr(usize)]
@@ -52,7 +52,7 @@ pub enum TradeAccount {
     Program,
     GlobalVolumeAccumulator,
     UserVolumeAccumulator,
-    FeeConfig
+    FeeConfig,
 }
 
 impl_index!(CreateAccount);

@@ -1,7 +1,8 @@
 use crate::instructions::{
     error::Error,
     pump::instructions::{
-        PumpBuyInstruction, PumpCreateInstruction, PumpCreateV2Instruction, PumpSellInstruction,
+        PumpBuyExactSolInInstruction, PumpBuyInstruction, PumpCreateInstruction,
+        PumpCreateV2Instruction, PumpSellInstruction,
     },
     registry::REGISTRY,
     system_program::instructions::{ComputeUnitLimit, ComputeUnitPrice},
@@ -15,6 +16,7 @@ pub enum Instruction {
     PumpCreate(PumpCreateInstruction),
     PumpCreateV2(PumpCreateV2Instruction),
     PumpBuy(PumpBuyInstruction),
+    PumpBuyExactIn(PumpBuyExactSolInInstruction),
     PumpSell(PumpSellInstruction),
 }
 
