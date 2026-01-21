@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     helper::{AccountIndex, Link, RawPubkey},
-    instructions::{error::Error, instructions::Instruction, pump::accounts::{CreateAccount, CreateV2Account, TradeAccount}, raw_instruction::RawSerializable},
+    instructions::{error::Error, instructions::Instruction, pump::accounts::{CreateAccount, CreateV2Account, TradeAccount}, raw_instruction::{InstructionAccounts, RawSerializable}},
 };
 
 #[derive(BorshDeserialize, Serialize, Deserialize, Debug)]
@@ -27,9 +27,11 @@ impl PumpCreateInstruction {
 }
 
 impl RawSerializable for PumpCreateInstruction {
-    type Account = CreateAccount;
-    
     const DISCRIMINATOR: &[u8] = &[24, 30, 200, 40, 5, 28, 7, 119];
+}
+
+impl InstructionAccounts for PumpCreateInstruction {
+    type Account = CreateAccount;
 }
 
 #[derive(BorshDeserialize, Debug)]
@@ -47,9 +49,11 @@ impl PumpCreateV2Instruction {
 }
 
 impl RawSerializable for PumpCreateV2Instruction {
-    type Account = CreateV2Account;
-
     const DISCRIMINATOR: &[u8] = &[214, 144, 76, 236, 95, 139, 49, 180];
+}
+
+impl InstructionAccounts for PumpCreateV2Instruction {
+    type Account = CreateV2Account;
 }
 
 #[derive(BorshDeserialize, Debug)]
@@ -66,9 +70,11 @@ impl PumpBuyInstruction {
 }
 
 impl RawSerializable for PumpBuyInstruction {
-    type Account = TradeAccount;
-
     const DISCRIMINATOR: &[u8] = &[102, 6, 61, 18, 1, 218, 235, 234];
+}
+
+impl InstructionAccounts for PumpBuyInstruction {
+    type Account = TradeAccount;
 }
 
 #[derive(BorshDeserialize, Debug)]
@@ -85,7 +91,9 @@ impl PumpSellInstruction {
 }
 
 impl RawSerializable for PumpSellInstruction {
-    type Account = TradeAccount;
-    
     const DISCRIMINATOR: &[u8] = &[51, 230, 133, 164, 1, 127, 131, 173];
+}
+
+impl InstructionAccounts for PumpSellInstruction {
+    type Account = TradeAccount;
 }

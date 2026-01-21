@@ -15,7 +15,6 @@ impl ComputeUnitLimit {
 }
 
 impl RawSerializable for ComputeUnitLimit {
-    type Account = ();
     const DISCRIMINATOR: &'static [u8] = &[2];
 }
 
@@ -32,6 +31,5 @@ impl ComputeUnitPrice {
 }
 
 impl RawSerializable for ComputeUnitPrice {
-    type Account = ();
     const DISCRIMINATOR: &'static [u8] = &[3];
 }

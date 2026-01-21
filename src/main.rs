@@ -1,6 +1,6 @@
-use sip_rs::instructions::pump::accounts::{CreateAccount, TradeAccount};
+use sip_rs::instructions::pump::accounts::{CreateAccount, CreateV2Account, TradeAccount};
 use sip_rs::instructions::{Instruction, pump::instructions::PumpCreateInstruction};
-use sip_rs::instructions::raw_instruction::RawSerializable;
+use sip_rs::instructions::raw_instruction::{InstructionAccounts, RawSerializable};
 fn main() {
     const ACCOUNTS: &[&str] = &[
         "Mint",
@@ -34,9 +34,9 @@ fn main() {
 
     let instruction = Instruction::from_bytes(&data).unwrap();
     match instruction {
-        Instruction::ComputePrice(create_data) => {
-            let idx = create_data.account_index(());
-            dbg!(idx);
+        Instruction::PumpCreateV2(create_data) => {
+            let idx = create_data.account_index(CreateV2Account::Mint);
+            dbg!(ACCOUNTS[idx]);
         },
 
         _ => ()
