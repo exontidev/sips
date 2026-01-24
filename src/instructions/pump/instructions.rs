@@ -1,6 +1,5 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use ix_macros::{Instruction, Instructions};
-use serde::{Deserialize, Serialize};
 
 use crate::{
     helper::{Amount, Link, NATIVE_SOL_PRECISION, RawPubkey},
@@ -23,7 +22,7 @@ pub enum PumpInstruction {
     Sell(PumpSellInstruction)
 }
 
-#[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize, Debug)]
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct PumpMetadata {
     pub name: alloc::string::String,
     pub symbol: alloc::string::String,
