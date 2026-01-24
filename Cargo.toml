@@ -1,7 +1,9 @@
 [package]
 name = "sips"
+description = "Solana Instruction Parser & Serializer. Built for easy type-safe instruction creation using macros"
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
 
 [dependencies]
 borsh = { version = "1.6.0", features = ["derive"] }
