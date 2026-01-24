@@ -1,8 +1,8 @@
 mod error;
-mod instructions;
-pub use instructions::Instruction;
-pub mod pump;
-pub use pump::instructions::PumpMetadata;
 pub mod raw_instruction;
-mod registry;
-mod system_program;
+
+pub mod compute_budget;
+pub mod system_program;
+
+//#[cfg(feature = "pump")]
+pub mod pump;

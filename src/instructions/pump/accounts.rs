@@ -1,6 +1,9 @@
-use crate::{helper::AccountIndex, impl_index};
+use ix_macros::Accounts;
+use crate::helper::AccountIndex;
+
 
 #[repr(usize)]
+#[derive(Accounts)]
 pub enum CreateAccount {
     Mint,
     MintAuthority,
@@ -19,6 +22,7 @@ pub enum CreateAccount {
 }
 
 #[repr(usize)]
+#[derive(Accounts)]
 pub enum CreateV2Account {
     Mint,
     MintAuthority,
@@ -38,6 +42,7 @@ pub enum CreateV2Account {
 }
 
 #[repr(usize)]
+#[derive(Accounts)]
 pub enum TradeAccount {
     Global,
     FeeAddress,
@@ -54,7 +59,3 @@ pub enum TradeAccount {
     UserVolumeAccumulator,
     FeeConfig,
 }
-
-impl_index!(CreateAccount);
-impl_index!(CreateV2Account);
-impl_index!(TradeAccount);

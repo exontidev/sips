@@ -2,9 +2,8 @@ use borsh::{BorshDeserialize, BorshSerialize};
 use serde::{Deserialize, Serialize};
 
 #[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize, Debug)]
-pub struct Link(pub String);
-#[derive(Serialize, Deserialize)]
-pub struct Base58Pubkey(pub String);
+pub struct Link(pub alloc::string::String);
+
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct RawPubkey(pub [u8; 32]);
 
@@ -25,17 +24,6 @@ impl AccountIndex for () {
     }
 }
 
-#[macro_export]
-macro_rules! impl_index {
-    ($t:ty) => {
-        impl AccountIndex for $t {
-            fn index(self) -> usize {
-                self as usize
-            }
-        }
-    };
-}
-
 #[derive(Serialize, Deserialize, BorshSerialize, BorshDeserialize, Debug)]
 pub struct Amount<const P: u8>(pub u64);
 
@@ -50,11 +38,11 @@ impl<const P: u8> Amount<P> {
         Self(raw)
     }
 
-    pub fn raw(self) -> u64 {
+    pub fn raw(&self) -> u64 {
         self.0
     }
 
-    pub fn to_float(self) -> f64 {
+    pub fn to_float(&self) -> f64 {
         self.0 as f64 / Self::SCALE as f64
     }
 }
