@@ -1,7 +1,6 @@
 use borsh::{BorshDeserialize, BorshSerialize};
-use serde::{Deserialize, Serialize};
 
-#[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize, Debug)]
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct Link(pub alloc::string::String);
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
@@ -11,7 +10,7 @@ pub const DISCRIMINATOR_SIZE: usize = 8;
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub struct AnchorDiscriminator(pub [u8; DISCRIMINATOR_SIZE]);
 
-#[derive(Serialize, Deserialize, BorshDeserialize)]
+#[derive(BorshDeserialize)]
 pub struct Time(pub u64);
 
 pub trait AccountIndex {
@@ -24,7 +23,7 @@ impl AccountIndex for () {
     }
 }
 
-#[derive(Serialize, Deserialize, BorshSerialize, BorshDeserialize, Debug)]
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct Amount<const P: u8>(pub u64);
 
 impl<const P: u8> Amount<P> {

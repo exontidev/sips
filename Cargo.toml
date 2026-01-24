@@ -5,7 +5,6 @@ edition = "2024"
 
 [dependencies]
 borsh = { version = "1.6.0", features = ["derive"] }
-serde = { version = "1.0.228", features = ["derive"] }
 
 ix_macros ={ path = "ix_macros"}
 
