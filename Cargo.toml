@@ -8,7 +8,7 @@ license = "MIT"
 [dependencies]
 borsh = { version = "1.6.0", features = ["derive"] }
 
-ix_macros ={ path = "./ix_macros", version = "0.1.0"}
+ix_macros ={ path = "./ix_macros", version = "0.1.1"}
 
 [features]
 pump = []
