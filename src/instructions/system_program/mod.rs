@@ -1,7 +1,12 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use ix_macros::{Accounts, Instruction};
-use crate::helper::AccountIndex;
-use crate::{helper::{Amount, NATIVE_SOL_PRECISION}, instructions::raw_instruction::RawSerializable};
+use crate::helper::RawPubkey;
+use crate::instructions::account::AccountMeta;
+use crate::instructions::account::Accounts;
+use crate::{
+    helper::{Amount, NATIVE_SOL_PRECISION},
+    instructions::raw_instruction::Instruction,
+};
 
 #[derive(Instruction, BorshSerialize, BorshDeserialize, Debug)]
 #[ix_data(discriminator = [2, 0, 0, 0])]
@@ -13,5 +18,5 @@ pub struct Transfer {
 #[derive(Accounts)]
 pub enum TransferAccount {
     Sender,
-    Receiver
+    Receiver,
 }

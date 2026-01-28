@@ -3,10 +3,7 @@ use ix_macros::{Instruction, Instructions};
 
 use crate::{
     helper::{Amount, Link, NATIVE_SOL_PRECISION, RawPubkey},
-    instructions::{
-        error::Error,
-        raw_instruction::{RawSerializable},
-    },
+    instructions::{error::Error, raw_instruction::Instruction},
 };
 
 const PUMP_SPL_PRECISION: u8 = 6;
@@ -19,7 +16,7 @@ pub enum PumpInstruction {
     Buy(PumpBuyInstruction),
     BuyExactIn(PumpBuyExactSolInInstruction),
 
-    Sell(PumpSellInstruction)
+    Sell(PumpSellInstruction),
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]

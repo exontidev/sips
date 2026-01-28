@@ -1,7 +1,7 @@
-use crate::{helper::AccountIndex, instructions::error::Error};
+use crate::instructions::{account::AccountMeta, error::Error};
 use borsh::{BorshDeserialize, BorshSerialize, from_slice};
 
-pub trait RawSerializable: Sized + BorshSerialize + BorshDeserialize {
+pub trait Instruction: Sized + BorshSerialize + BorshDeserialize {
     const DISCRIMINATOR: &'static [u8];
 
     fn from_bytes(data: &[u8]) -> Result<Self, Error> {
@@ -25,10 +25,7 @@ pub trait RawSerializable: Sized + BorshSerialize + BorshDeserialize {
     }
 }
 
-pub trait InstructionAccounts {
-    type Account: AccountIndex;
-
-    fn account_index(&self, account: Self::Account) -> usize {
-        account.index()
-    }
+pub struct RawInstruction<'a> {
+    pub data : &'a [u8],
+    pub accounts : &'a [AccountMeta]
 }

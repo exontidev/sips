@@ -1,18 +1,30 @@
+use crate::{helper::RawPubkey, instructions::account::{AccountMeta, Accounts}};
 use ix_macros::Accounts;
-use crate::helper::AccountIndex;
-
 
 #[repr(usize)]
 #[derive(Accounts)]
 pub enum CreateAccount {
+    #[signer]
+    #[writable]
     Mint,
     MintAuthority,
+
+    #[writable]
     BondingCurve,
+
+    #[writable]
     AssociatedBondingCurve,
+
     Global,
     MetaplexTokenMetadata,
+
+    #[writable]
     Metadata,
+
+    #[signer]
+    #[writable]
     User,
+
     SystemProgram,
     TokenProgram,
     AssociatedTokenProgram,

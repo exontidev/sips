@@ -13,16 +13,6 @@ pub struct AnchorDiscriminator(pub [u8; DISCRIMINATOR_SIZE]);
 #[derive(BorshDeserialize)]
 pub struct Time(pub u64);
 
-pub trait AccountIndex {
-    fn index(self) -> usize;
-}
-
-impl AccountIndex for () {
-    fn index(self) -> usize {
-        unreachable!("This instruction has no accounts")
-    }
-}
-
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct Amount<const P: u8>(pub u64);
 

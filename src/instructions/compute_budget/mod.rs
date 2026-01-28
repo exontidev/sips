@@ -1,9 +1,7 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use ix_macros::{Instruction, Instructions};
 
-use crate::instructions::{
-    error::Error, raw_instruction::RawSerializable,
-};
+use crate::instructions::{error::Error, raw_instruction::Instruction};
 
 #[derive(Instruction, BorshSerialize, BorshDeserialize, Debug)]
 #[ix_data(discriminator = [2])]
@@ -20,5 +18,5 @@ pub struct ComputeUnitPrice {
 #[derive(Instructions, Debug)]
 pub enum ComputeBudgetInstruction {
     SetUnitPrice(ComputeUnitPrice),
-    SetComputeLimit(ComputeUnitLimit)
+    SetComputeLimit(ComputeUnitLimit),
 }
