@@ -26,6 +26,6 @@ pub trait Instruction: Sized + BorshSerialize + BorshDeserialize {
 }
 
 pub struct RawInstruction<'a> {
-    pub data : &'a [u8],
-    pub accounts : &'a [AccountMeta]
+    pub data: &'a [u8],
+    pub accounts: &'a [AccountMeta<'a>],
 }

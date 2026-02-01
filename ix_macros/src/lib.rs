@@ -1,19 +1,21 @@
 use proc_macro::TokenStream;
 use quote::{format_ident, quote};
-use syn::{parse_macro_input, Data, DeriveInput, Fields};
+use syn::{Data, DeriveInput, Fields, parse_macro_input};
 
 #[derive(deluxe::ExtractAttributes)]
 #[deluxe(attributes(ix_data))]
 struct InstructionData {
-    discriminator : Vec<u8>,
-    accounts : Option<syn::Type>
+    discriminator: Vec<u8>,
+    accounts: Option<syn::Type>,
 }
 
-fn derive_instruction2(input: proc_macro2::TokenStream) -> deluxe::Result<proc_macro2::TokenStream> {
-    let mut ast : DeriveInput = syn::parse2(input)?;
+fn derive_instruction2(
+    input: proc_macro2::TokenStream,
+) -> deluxe::Result<proc_macro2::TokenStream> {
+    let mut ast: DeriveInput = syn::parse2(input)?;
 
-    let ix_data : InstructionData = deluxe::extract_attributes(&mut ast)?;
-    
+    let ix_data: InstructionData = deluxe::extract_attributes(&mut ast)?;
+
     let accounts = ix_data.accounts;
     let discriminator = ix_data.discriminator;
 
@@ -21,7 +23,7 @@ fn derive_instruction2(input: proc_macro2::TokenStream) -> deluxe::Result<proc_m
 
     let bytes = discriminator.iter();
 
-    let disc = quote! { 
+    let disc = quote! {
         impl Instruction for #name {
             const DISCRIMINATOR: &'static [u8] = &[#(#bytes),*];
         }
@@ -29,14 +31,14 @@ fn derive_instruction2(input: proc_macro2::TokenStream) -> deluxe::Result<proc_m
 
     let accs = match accounts {
         Some(accounts) => {
-            quote! { 
+            quote! {
                 impl InstructionAccounts for #name {
                     type Account = #accounts
                 }
             }
-        },
+        }
 
-        _ => quote! {}
+        _ => quote! {},
     };
 
     Ok(quote! {
@@ -51,7 +53,6 @@ pub fn derive_instruction(input: proc_macro::TokenStream) -> proc_macro::TokenSt
         .unwrap_or_else(|e| e.into_compile_error())
         .into()
 }
-
 
 #[proc_macro_derive(Instructions)]
 pub fn derive_instruction_set(input: TokenStream) -> TokenStream {
@@ -96,96 +97,41 @@ pub fn derive_instruction_set(input: TokenStream) -> TokenStream {
 pub fn derive_accounts(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let name = &input.ident;
-    let payload_name = format_ident!("{}Payload", name);
 
-    let variants = match input.data {
-        Data::Enum(ref data_enum) => &data_enum.variants,
-        _ => panic!("Accounts derive can only be used on enums"),
+    let fields = match input.data {
+        Data::Struct(ref data) => match data.fields {
+            Fields::Named(ref fields) => &fields.named,
+            _ => panic!("Accounts derive can only be used on structs with named fields"),
+        },
+        _ => panic!("Accounts derive can only be used on structs"),
     };
 
-    let count = variants.len();
+    let count = fields.len();
 
-    let variant_details: Vec<_> = variants
-        .iter()
-        .map(|v| {
-            let var_ident = &v.ident;
-            let field_ident = format_ident!("{}", to_snake_case(&var_ident.to_string()));
-            
-            let is_signer = v.attrs.iter().any(|attr| attr.path().is_ident("signer"));
-            let is_writable = v.attrs.iter().any(|attr| attr.path().is_ident("writable"));
+    let meta_entries = fields.iter().map(|f| {
+        let field_ident = &f.ident;
 
-            (field_ident, is_signer, is_writable)
-        })
-        .collect();
+        let is_signer = f.attrs.iter().any(|attr| attr.path().is_ident("signer"));
+        let is_writable = f.attrs.iter().any(|attr| attr.path().is_ident("writable"));
 
-    // Prepare code fragments
-    let struct_fields = variant_details.iter().map(|(field, _, _)| {
-        quote! { pub #field: RawPubkey }
-    });
-
-    let new_params = variant_details.iter().map(|(field, _, _)| {
-        quote! { #field: RawPubkey }
-    });
-
-    let new_init = variant_details.iter().map(|(field, _, _)| {
-        quote! { #field }
-    });
-
-    let meta_entries = variant_details.iter().map(|(field, signer, writable)| {
         quote! {
             AccountMeta {
-                pubkey: self.#field,
-                is_signer: #signer,
-                writeble: #writable,
+                pubkey: &self.#field_ident,
+                is_signer: #is_signer,
+                writable: #is_writable,
             }
         }
     });
 
     let expanded = quote! {
-        impl Accounts for #name {
-            const ACCOUNT_LENGTH: usize = #count;
-            
-            #[inline(always)]
-            fn index(self) -> usize {
-                self as usize
-            }
-        }
-
-        pub struct #payload_name {
-            #(#struct_fields,)*
-        }
-        
-        impl #payload_name {
-            
-            #[inline(always)]
-            pub fn new(
-                #(#new_params,)*
-            ) -> Self {
-                Self {
-                    #(#new_init,)*
-                }
-            }
-        }
-
-        impl Into<[AccountMeta; #name::ACCOUNT_LENGTH]> for #payload_name {
-            fn into(self) -> [AccountMeta; #name::ACCOUNT_LENGTH] {
+        impl<'a> IntoAccountMetaArray<'a, #count> for #name {
+            fn accounts_meta(&'a self) -> [AccountMeta<'a>; #count] {
                 [
-                    #(#meta_entries,)*
+                    #(#meta_entries),*
                 ]
             }
         }
     };
 
     TokenStream::from(expanded)
-}
-
-fn to_snake_case(s: &str) -> String {
-    let mut snake = String::new();
-    for (i, ch) in s.chars().enumerate() {
-        if ch.is_uppercase() && i != 0 {
-            snake.push('_');
-        }
-        snake.push(ch.to_ascii_lowercase());
-    }
-    snake
 }

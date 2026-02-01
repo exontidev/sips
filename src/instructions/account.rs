@@ -1,12 +1,11 @@
 use crate::helper::RawPubkey;
 
-pub trait Accounts {
-    const ACCOUNT_LENGTH : usize;
-    fn index(self) -> usize;
+pub trait IntoAccountMetaArray<'a, const N: usize> {
+    fn accounts_meta(&'a self) -> [AccountMeta<'a>; N];
 }
 
-pub struct AccountMeta {
-    pub pubkey: RawPubkey,
+pub struct AccountMeta<'a> {
+    pub pubkey: &'a RawPubkey,
     pub is_signer: bool,
-    pub writeble: bool,
+    pub writable: bool,
 }

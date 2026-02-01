@@ -28,8 +28,7 @@ pub struct PumpMetadata {
 
 #[derive(Instruction, BorshSerialize, BorshDeserialize, Debug)]
 #[ix_data(
-    discriminator = [24, 30, 200, 40, 5, 28, 7, 119],
-    accounts = CreateAccount
+    discriminator = [24, 30, 200, 40, 5, 28, 7, 119]
 )]
 pub struct PumpCreateInstruction {
     pub metadata: PumpMetadata,
@@ -38,8 +37,7 @@ pub struct PumpCreateInstruction {
 
 #[derive(Instruction, BorshSerialize, BorshDeserialize, Debug)]
 #[ix_data(
-    discriminator = [214, 144, 76, 236, 95, 139, 49, 180],
-    accounts = CreateV2Account
+    discriminator = [214, 144, 76, 236, 95, 139, 49, 180]
 )]
 pub struct PumpCreateV2Instruction {
     pub metadata: PumpMetadata,
@@ -49,8 +47,7 @@ pub struct PumpCreateV2Instruction {
 
 #[derive(Instruction, BorshSerialize, BorshDeserialize, Debug)]
 #[ix_data(
-    discriminator = [102, 6, 61, 18, 1, 218, 235, 234],
-    accounts = TradeAccount
+    discriminator = [102, 6, 61, 18, 1, 218, 235, 234]
 )]
 pub struct PumpBuyInstruction {
     pub spl_amount: Amount<PUMP_SPL_PRECISION>,
@@ -59,8 +56,7 @@ pub struct PumpBuyInstruction {
 
 #[derive(Instruction, BorshSerialize, BorshDeserialize, Debug)]
 #[ix_data(
-    discriminator = [51, 230, 133, 164, 1, 127, 131, 173],
-    accounts = TradeAccount
+    discriminator = [51, 230, 133, 164, 1, 127, 131, 173]
 )]
 pub struct PumpSellInstruction {
     pub spl_amount: Amount<PUMP_SPL_PRECISION>,
@@ -69,8 +65,7 @@ pub struct PumpSellInstruction {
 
 #[derive(Instruction, BorshSerialize, BorshDeserialize, Debug)]
 #[ix_data(
-    discriminator = [56, 252, 116, 8, 158, 223, 205, 95],
-    accounts = TradeAccount
+    discriminator = [56, 252, 116, 8, 158, 223, 205, 95]
 )]
 pub struct PumpBuyExactSolInInstruction {
     pub sol_amount: Amount<NATIVE_SOL_PRECISION>,
