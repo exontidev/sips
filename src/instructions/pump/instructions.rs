@@ -3,20 +3,32 @@ use ix_macros::{Instruction, Instructions};
 
 use crate::{
     helper::{Amount, Link, NATIVE_SOL_PRECISION, RawPubkey},
-    instructions::{error::Error, raw_instruction::Instruction},
+    instructions::{
+        error::Error,
+        pump::accounts::{CreateAccounts, CreateV2Accounts, TradeAccounts},
+        raw_instruction::{Instruction, InstructionArgs},
+    },
 };
 
 const PUMP_SPL_PRECISION: u8 = 6;
 
-#[derive(Instructions, Debug)]
+#[derive(Debug)]
 pub enum PumpInstruction {
-    Create(PumpCreateInstruction),
-    CreateV2(PumpCreateV2Instruction),
+    Create(Instruction<{ CreateAccounts::ACCOUNT_LENGTH }, PumpCreateInstruction, CreateAccounts>),
+    CreateV2(
+        Instruction<
+            { CreateV2Accounts::ACCOUNT_LENGTH },
+            PumpCreateV2Instruction,
+            CreateV2Accounts,
+        >,
+    ),
 
-    Buy(PumpBuyInstruction),
-    BuyExactIn(PumpBuyExactSolInInstruction),
+    Buy(Instruction<{ TradeAccounts::ACCOUNT_LENGTH }, PumpBuyInstruction, TradeAccounts>),
+    BuyExactIn(
+        Instruction<{ TradeAccounts::ACCOUNT_LENGTH }, PumpBuyExactSolInInstruction, TradeAccounts>,
+    ),
 
-    Sell(PumpSellInstruction),
+    Sell(Instruction<{ TradeAccounts::ACCOUNT_LENGTH }, PumpSellInstruction, TradeAccounts>),
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]

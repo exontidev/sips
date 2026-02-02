@@ -2,7 +2,7 @@ use crate::helper::RawPubkey;
 use crate::instructions::account::{AccountMeta, IntoAccountMetaArray};
 use ix_macros::Accounts;
 
-#[derive(Accounts)]
+#[derive(Accounts, Debug)]
 pub struct CreateAccounts {
     #[signer]
     #[writable]
@@ -33,7 +33,7 @@ pub struct CreateAccounts {
     pub program: RawPubkey,
 }
 
-#[derive(Accounts)]
+#[derive(Accounts, Debug)]
 pub struct CreateV2Accounts {
     #[signer]
     #[writable]
@@ -73,7 +73,7 @@ pub struct CreateV2Accounts {
     pub event_authority: RawPubkey,
 }
 
-#[derive(Accounts)]
+#[derive(Accounts, Debug)]
 pub struct TradeAccounts {
     pub global: RawPubkey,
     #[writable]

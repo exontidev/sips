@@ -1,6 +1,9 @@
 use sips::{
     helper::RawPubkey,
-    instructions::{account::IntoAccountMetaArray, system_program::TransferAccounts},
+    instructions::{
+        account::IntoAccountMetaArray, pump::accounts::CreateAccounts,
+        system_program::TransferAccounts,
+    },
 };
 
 fn main() {
@@ -18,4 +21,6 @@ fn main() {
         sender: RawPubkey(alice),
         receiver: RawPubkey(bob),
     };
+
+    dbg!()
 }

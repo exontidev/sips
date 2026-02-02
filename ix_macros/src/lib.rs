@@ -24,26 +24,13 @@ fn derive_instruction2(
     let bytes = discriminator.iter();
 
     let disc = quote! {
-        impl Instruction for #name {
+        impl InstructionArgs for #name {
             const DISCRIMINATOR: &'static [u8] = &[#(#bytes),*];
         }
     };
 
-    let accs = match accounts {
-        Some(accounts) => {
-            quote! {
-                impl InstructionAccounts for #name {
-                    type Account = #accounts
-                }
-            }
-        }
-
-        _ => quote! {},
-    };
-
     Ok(quote! {
-        #disc,
-        #accs
+        #disc
     })
 }
 
@@ -73,8 +60,8 @@ pub fn derive_instruction_set(input: TokenStream) -> TokenStream {
         };
 
         quote! {
-            if data.starts_with(<#inner_type as Instruction>::DISCRIMINATOR) {
-                return <#inner_type as Instruction>::from_bytes(data)
+            if data.starts_with(<#inner_type as InstructionArgs>::DISCRIMINATOR) {
+                return <#inner_type as InstructionArgs>::from_bytes(data)
                     .map(#name::#variant_ident);
             }
         }
@@ -116,7 +103,7 @@ pub fn derive_accounts(input: TokenStream) -> TokenStream {
 
         quote! {
             AccountMeta {
-                pubkey: &self.#field_ident,
+                pubkey: self.#field_ident,
                 is_signer: #is_signer,
                 writable: #is_writable,
             }
@@ -124,8 +111,12 @@ pub fn derive_accounts(input: TokenStream) -> TokenStream {
     });
 
     let expanded = quote! {
-        impl<'a> IntoAccountMetaArray<'a, #count> for #name {
-            fn accounts_meta(&'a self) -> [AccountMeta<'a>; #count] {
+        impl #name {
+            pub const ACCOUNT_LENGTH : usize = #count;
+        }
+
+        impl IntoAccountMetaArray<#count> for #name {
+            fn accounts_meta(self) -> [AccountMeta; #count] {
                 [
                     #(#meta_entries),*
                 ]

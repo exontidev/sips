@@ -2,7 +2,7 @@ use crate::helper::RawPubkey;
 
 use crate::{
     helper::{Amount, NATIVE_SOL_PRECISION},
-    instructions::raw_instruction::Instruction,
+    instructions::raw_instruction::InstructionArgs,
 };
 use borsh::{BorshDeserialize, BorshSerialize};
 use ix_macros::{Accounts, Instruction};

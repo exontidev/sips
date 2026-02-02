@@ -1,7 +1,18 @@
-use crate::instructions::{account::AccountMeta, error::Error};
+use crate::{
+    helper::RawPubkey,
+    instructions::{account::IntoAccountMetaArray, error::Error},
+};
+
 use borsh::{BorshDeserialize, BorshSerialize, from_slice};
 
-pub trait Instruction: Sized + BorshSerialize + BorshDeserialize {
+#[derive(Debug)]
+pub struct Instruction<const N: usize, Args: InstructionArgs, Accounts: IntoAccountMetaArray<N>> {
+    pub program: RawPubkey,
+    pub data: Args,
+    pub accounts: Accounts,
+}
+
+pub trait InstructionArgs: Sized + BorshSerialize + BorshDeserialize {
     const DISCRIMINATOR: &'static [u8];
 
     fn from_bytes(data: &[u8]) -> Result<Self, Error> {
@@ -23,9 +34,4 @@ pub trait Instruction: Sized + BorshSerialize + BorshDeserialize {
 
         Ok(instruction)
     }
-}
-
-pub struct RawInstruction<'a> {
-    pub data: &'a [u8],
-    pub accounts: &'a [AccountMeta<'a>],
 }
