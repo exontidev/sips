@@ -105,3 +105,14 @@ pub struct TradeAccounts {
     pub user_volume_accumulator: RawPubkey,
     pub fee_config: RawPubkey,
 }
+
+#[derive(Accounts, Debug)]
+pub struct CloseUserVolumeAccumulatorAccounts {
+    #[signer]
+    #[writable]
+    user: RawPubkey,
+    #[writable]
+    user_volume_accumulator: RawPubkey,
+    event_authority: RawPubkey,
+    program: RawPubkey,
+}

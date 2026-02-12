@@ -85,41 +85,36 @@ pub fn derive_accounts(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let name = &input.ident;
 
-    let fields = match input.data {
-        Data::Struct(ref data) => match data.fields {
-            Fields::Named(ref fields) => &fields.named,
+    let fields = match &input.data {
+        Data::Struct(data) => match &data.fields {
+            Fields::Named(named) => &named.named,
             _ => panic!("Accounts derive can only be used on structs with named fields"),
         },
         _ => panic!("Accounts derive can only be used on structs"),
     };
 
-    let count = fields.len();
-
+    // collect the identifiers and signer/writable flags
     let meta_entries = fields.iter().map(|f| {
         let field_ident = &f.ident;
-
         let is_signer = f.attrs.iter().any(|attr| attr.path().is_ident("signer"));
         let is_writable = f.attrs.iter().any(|attr| attr.path().is_ident("writable"));
-
         quote! {
-            AccountMeta {
+            v.push(AccountMeta {
                 pubkey: self.#field_ident,
                 is_signer: #is_signer,
                 writable: #is_writable,
-            }
+            });
         }
     });
 
-    let expanded = quote! {
-        impl #name {
-            pub const ACCOUNT_LENGTH : usize = #count;
-        }
+    let count = fields.len();
 
-        impl IntoAccountMetaArray<#count> for #name {
-            fn accounts_meta(self) -> [AccountMeta; #count] {
-                [
-                    #(#meta_entries),*
-                ]
+    let expanded = quote! {
+        impl IntoAccountMetaArray for #name {
+            fn accounts_meta(self) -> alloc::vec::Vec<AccountMeta> {
+                let mut v = alloc::vec::Vec::with_capacity(#count);
+                #(#meta_entries)*
+                v
             }
         }
     };

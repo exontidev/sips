@@ -10,18 +10,40 @@ use alloc::vec::Vec;
 use borsh::{BorshDeserialize, BorshSerialize, from_slice};
 
 #[derive(Debug)]
-pub struct Instruction<const N: usize, Args: InstructionArgs, Accounts: IntoAccountMetaArray<N>> {
+pub struct Instruction<Args: InstructionArgs> {
+    pub program: RawPubkey,
+    pub data: Args,
+}
+
+impl<Args> Instruction<Args>
+where
+    Args: InstructionArgs,
+{
+    pub fn into_raw(self) -> RawInstruction {
+        let data = self.data.to_le_bytes();
+        let program = self.program;
+
+        RawInstruction {
+            program,
+            data,
+            accounts: alloc::vec![],
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct InstructionWithAccounts<Args: InstructionArgs, Accounts: IntoAccountMetaArray> {
     pub program: RawPubkey,
     pub data: Args,
     pub accounts: Accounts,
 }
 
-impl<const N: usize, Args, Accounts> Instruction<N, Args, Accounts>
+impl<Args, Accounts> InstructionWithAccounts<Args, Accounts>
 where
     Args: InstructionArgs,
-    Accounts: IntoAccountMetaArray<N>,
+    Accounts: IntoAccountMetaArray,
 {
-    pub fn into_raw(self) -> RawInstruction<N> {
+    pub fn into_raw(self) -> RawInstruction {
         let data = self.data.to_le_bytes();
         let accounts = self.accounts.accounts_meta();
         let program = self.program;
@@ -34,10 +56,11 @@ where
     }
 }
 
-pub struct RawInstruction<const N: usize> {
+#[derive(Debug)]
+pub struct RawInstruction {
     pub program: RawPubkey,
     pub data: Vec<u8>,
-    pub accounts: [AccountMeta; N],
+    pub accounts: Vec<AccountMeta>,
 }
 
 pub trait InstructionArgs: Sized + BorshSerialize + BorshDeserialize {

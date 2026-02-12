@@ -6,7 +6,7 @@ use crate::{
     instructions::{
         error::Error,
         pump::accounts::{CreateAccounts, CreateV2Accounts, TradeAccounts},
-        raw_instruction::{Instruction, InstructionArgs, RawInstruction},
+        raw_instruction::{Instruction, InstructionArgs, InstructionWithAccounts, RawInstruction},
     },
 };
 
@@ -14,34 +14,26 @@ const PUMP_SPL_PRECISION: u8 = 6;
 
 #[derive(Debug)]
 pub enum PumpInstruction {
-    Create(Instruction<{ CreateAccounts::ACCOUNT_LENGTH }, PumpCreateInstruction, CreateAccounts>),
-    CreateV2(
-        Instruction<
-            { CreateV2Accounts::ACCOUNT_LENGTH },
-            PumpCreateV2Instruction,
-            CreateV2Accounts,
-        >,
-    ),
+    Create(InstructionWithAccounts<PumpCreateInstruction, CreateAccounts>),
+    CreateV2(InstructionWithAccounts<PumpCreateV2Instruction, CreateV2Accounts>),
 
-    Buy(Instruction<{ TradeAccounts::ACCOUNT_LENGTH }, PumpBuyInstruction, TradeAccounts>),
-    BuyExactIn(
-        Instruction<{ TradeAccounts::ACCOUNT_LENGTH }, PumpBuyExactSolInInstruction, TradeAccounts>,
-    ),
+    Buy(InstructionWithAccounts<PumpBuyInstruction, TradeAccounts>),
+    BuyExactIn(InstructionWithAccounts<PumpBuyExactSolInInstruction, TradeAccounts>),
 
-    Sell(Instruction<{ TradeAccounts::ACCOUNT_LENGTH }, PumpSellInstruction, TradeAccounts>),
+    Sell(InstructionWithAccounts<PumpSellInstruction, TradeAccounts>),
 }
 
-// impl PumpInstruction {
-//     pub fn to_bytes(&self) -> RawInstruction<_> {
-//         match self {
-//             Self::Create(ix) => ix.into_raw(),
-//             Self::CreateV2(ix) => todo!(),
-//             Self::Buy(ix) => ix.into_raw(),
-//             Self::BuyExactIn(ix) => ix.into_raw(),
-//             Self::Sell(ix) => ix.into_raw(),
-//         }
-//     }
-// }
+impl PumpInstruction {
+    pub fn raw(self) -> RawInstruction {
+        match self {
+            Self::Create(ix) => ix.into_raw(),
+            Self::CreateV2(ix) => ix.into_raw(),
+            Self::Buy(ix) => ix.into_raw(),
+            Self::BuyExactIn(ix) => ix.into_raw(),
+            Self::Sell(ix) => ix.into_raw(),
+        }
+    }
+}
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct PumpMetadata {
@@ -85,3 +77,7 @@ pub struct PumpBuyExactSolInInstruction {
     pub sol_amount: Amount<NATIVE_SOL_PRECISION>,
     pub minimum_token_output: Amount<PUMP_SPL_PRECISION>,
 }
+
+#[derive(Instruction, BorshSerialize, BorshDeserialize, Debug)]
+#[ix_data(discriminator = [0xf9, 0x45, 0xa4, 0xda, 0x96, 0x67, 0x54, 0x8a])]
+pub struct CloseUserVolumeAccumulator;

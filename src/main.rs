@@ -1,28 +1,16 @@
 use sips::{
     helper::{Amount, RawPubkey},
-    instructions::{
-        account::IntoAccountMetaArray,
-        pump::{
-            accounts::{CreateAccounts, TradeAccounts},
-            instructions::{PumpInstruction, PumpSellInstruction},
-        },
-        raw_instruction::{Instruction, InstructionArgs},
-        system_program::{Transfer, TransferAccounts},
-    },
+    instructions::{compute_budget::ComputeUnitPrice, raw_instruction::Instruction},
 };
 
 fn main() {
-    let buy = PumpInstruction::Buy(Instruction {
-        program: RawPubkey([
-            79, 107, 26, 157, 62, 124, 47, 138, 28, 85, 208, 183, 164, 227, 242, 156, 109, 142,
-            123, 42, 31, 12, 157, 62, 106, 75, 92, 125, 142, 159, 1, 0,
-        ]),
+    let buy = Instruction {
+        program: RawPubkey(five8_const::decode_32_const(
+            "ComputeBudget111111111111111111111111111111",
+        )),
+        data: ComputeUnitPrice::from_sol(Amount::from_float(0.5)),
+    }
+    .into_raw();
 
-        data: sips::instructions::pump::instructions::PumpBuyInstruction {
-            spl_amount: Amount::from_float(100_000.0),
-            maximum_sol_input: Amount::from_float(1.0),
-        },
-
-        accounts: todo!(),
-    });
+    dbg!(buy);
 }
