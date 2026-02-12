@@ -5,7 +5,9 @@ use crate::{
     helper::{Amount, Link, NATIVE_SOL_PRECISION, RawPubkey},
     instructions::{
         error::Error,
-        pump::accounts::{CreateAccounts, CreateV2Accounts, TradeAccounts},
+        pump::accounts::{
+            CloseUserVolumeAccumulatorAccounts, CreateAccounts, CreateV2Accounts, TradeAccounts,
+        },
         raw_instruction::{Instruction, InstructionArgs, InstructionWithAccounts, RawInstruction},
     },
 };
@@ -21,16 +23,23 @@ pub enum PumpInstruction {
     BuyExactIn(InstructionWithAccounts<PumpBuyExactSolInInstruction, TradeAccounts>),
 
     Sell(InstructionWithAccounts<PumpSellInstruction, TradeAccounts>),
+    CloseAccumulatorAccount(
+        InstructionWithAccounts<CloseUserVolumeAccumulator, CloseUserVolumeAccumulatorAccounts>,
+    ),
 }
 
 impl PumpInstruction {
+    const PROGRAM: RawPubkey = RawPubkey(five8_const::decode_32_const(
+        "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",
+    ));
     pub fn raw(self) -> RawInstruction {
         match self {
-            Self::Create(ix) => ix.into_raw(),
-            Self::CreateV2(ix) => ix.into_raw(),
-            Self::Buy(ix) => ix.into_raw(),
-            Self::BuyExactIn(ix) => ix.into_raw(),
-            Self::Sell(ix) => ix.into_raw(),
+            Self::Create(ix) => ix.into_raw(PumpInstruction::PROGRAM),
+            Self::CreateV2(ix) => ix.into_raw(PumpInstruction::PROGRAM),
+            Self::Buy(ix) => ix.into_raw(PumpInstruction::PROGRAM),
+            Self::BuyExactIn(ix) => ix.into_raw(PumpInstruction::PROGRAM),
+            Self::Sell(ix) => ix.into_raw(PumpInstruction::PROGRAM),
+            Self::CloseAccumulatorAccount(ix) => ix.into_raw(PumpInstruction::PROGRAM),
         }
     }
 }

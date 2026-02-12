@@ -2,12 +2,16 @@ use borsh::{BorshDeserialize, BorshSerialize};
 use ix_macros::{Instruction, Instructions};
 
 use crate::{
-    helper::{Amount, NATIVE_SOL_PRECISION},
+    helper::{Amount, NATIVE_SOL_PRECISION, RawPubkey},
     instructions::{
         error::Error,
         raw_instruction::{Instruction, InstructionArgs},
     },
 };
+
+const COMPUTE_BUDGET_PUBKEY: RawPubkey = RawPubkey(five8_const::decode_32_const(
+    "ComputeBudget111111111111111111111111111111",
+));
 
 #[derive(Instruction, BorshSerialize, BorshDeserialize, Debug)]
 #[ix_data(discriminator = [2])]

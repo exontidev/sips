@@ -11,7 +11,6 @@ use borsh::{BorshDeserialize, BorshSerialize, from_slice};
 
 #[derive(Debug)]
 pub struct Instruction<Args: InstructionArgs> {
-    pub program: RawPubkey,
     pub data: Args,
 }
 
@@ -19,9 +18,8 @@ impl<Args> Instruction<Args>
 where
     Args: InstructionArgs,
 {
-    pub fn into_raw(self) -> RawInstruction {
+    pub fn into_raw(self, program: RawPubkey) -> RawInstruction {
         let data = self.data.to_le_bytes();
-        let program = self.program;
 
         RawInstruction {
             program,
@@ -33,7 +31,6 @@ where
 
 #[derive(Debug)]
 pub struct InstructionWithAccounts<Args: InstructionArgs, Accounts: IntoAccountMetaArray> {
-    pub program: RawPubkey,
     pub data: Args,
     pub accounts: Accounts,
 }
@@ -43,10 +40,9 @@ where
     Args: InstructionArgs,
     Accounts: IntoAccountMetaArray,
 {
-    pub fn into_raw(self) -> RawInstruction {
+    pub fn into_raw(self, program: RawPubkey) -> RawInstruction {
         let data = self.data.to_le_bytes();
         let accounts = self.accounts.accounts_meta();
-        let program = self.program;
 
         RawInstruction {
             program,
