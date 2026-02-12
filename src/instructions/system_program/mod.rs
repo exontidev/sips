@@ -14,7 +14,7 @@ use crate::instructions::account::{AccountMeta, IntoAccountMetaArray};
     discriminator = [2, 0, 0, 0]
 )]
 pub struct Transfer {
-    sol: Amount<NATIVE_SOL_PRECISION>,
+    pub sol: Amount<NATIVE_SOL_PRECISION>,
 }
 
 #[derive(Accounts)]

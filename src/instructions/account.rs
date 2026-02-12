@@ -1,5 +1,6 @@
 use crate::helper::RawPubkey;
 
+//make accounts generic + not meta
 pub trait IntoAccountMetaArray<const N: usize> {
     fn accounts_meta(self) -> [AccountMeta; N];
 }
