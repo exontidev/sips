@@ -5,7 +5,11 @@ pub struct Link(pub alloc::string::String);
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct RawPubkey(pub [u8; 32]);
-
+impl RawPubkey {
+    pub const fn from_str_const(data: &'static str) -> Self {
+        RawPubkey(five8_const::decode_32_const(data))
+    }
+}
 pub const DISCRIMINATOR_SIZE: usize = 8;
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub struct AnchorDiscriminator(pub [u8; DISCRIMINATOR_SIZE]);

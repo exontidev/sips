@@ -14,7 +14,8 @@ use crate::{
 
 const PUMP_SPL_PRECISION: u8 = 6;
 
-#[derive(Debug)]
+#[derive(Instructions, Debug)]
+#[program("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P")]
 pub enum PumpInstruction {
     Create(InstructionWithAccounts<PumpCreateInstruction, CreateAccounts>),
     CreateV2(InstructionWithAccounts<PumpCreateV2Instruction, CreateV2Accounts>),
@@ -26,22 +27,6 @@ pub enum PumpInstruction {
     CloseAccumulatorAccount(
         InstructionWithAccounts<CloseUserVolumeAccumulator, CloseUserVolumeAccumulatorAccounts>,
     ),
-}
-
-impl PumpInstruction {
-    const PROGRAM: RawPubkey = RawPubkey(five8_const::decode_32_const(
-        "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",
-    ));
-    pub fn raw(self) -> RawInstruction {
-        match self {
-            Self::Create(ix) => ix.into_raw(PumpInstruction::PROGRAM),
-            Self::CreateV2(ix) => ix.into_raw(PumpInstruction::PROGRAM),
-            Self::Buy(ix) => ix.into_raw(PumpInstruction::PROGRAM),
-            Self::BuyExactIn(ix) => ix.into_raw(PumpInstruction::PROGRAM),
-            Self::Sell(ix) => ix.into_raw(PumpInstruction::PROGRAM),
-            Self::CloseAccumulatorAccount(ix) => ix.into_raw(PumpInstruction::PROGRAM),
-        }
-    }
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]

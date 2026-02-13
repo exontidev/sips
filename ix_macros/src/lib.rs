@@ -41,38 +41,44 @@ pub fn derive_instruction(input: proc_macro::TokenStream) -> proc_macro::TokenSt
         .into()
 }
 
-#[proc_macro_derive(Instructions)]
+#[proc_macro_derive(Instructions, attributes(program))]
 pub fn derive_instruction_set(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    let name = input.ident;
+    let name = &input.ident;
 
-    let variants = match input.data {
-        Data::Enum(ref data_enum) => &data_enum.variants,
+    let program_attr = input
+        .attrs
+        .iter()
+        .find(|attr| attr.path().is_ident("program"))
+        .expect("enum must have #[program(\"...\")] attribute");
+
+    let program_lit: syn::LitStr = program_attr
+        .parse_args()
+        .expect("program attribute must be a string");
+
+    let variants = match &input.data {
+        Data::Enum(data_enum) => &data_enum.variants,
         _ => panic!("InstructionSet can only be derived for enums"),
     };
 
     let match_arms = variants.iter().map(|variant| {
-        let variant_ident = &variant.ident;
-
-        let inner_type = match &variant.fields {
-            Fields::Unnamed(f) if f.unnamed.len() == 1 => &f.unnamed[0].ty,
-            _ => panic!("Variants must be tuple variants with exactly one inner type, e.g. Create(PumpCreateInstruction)"),
-        };
-
-        quote! {
-            if data.starts_with(<#inner_type as InstructionArgs>::DISCRIMINATOR) {
-                return <#inner_type as InstructionArgs>::from_bytes(data)
-                    .map(#name::#variant_ident);
+        let v = &variant.ident;
+        match &variant.fields {
+            Fields::Unnamed(f) if f.unnamed.len() == 1 => {
+                quote! { Self::#v(ix) => ix.into_raw(Self::PROGRAM), }
             }
+            _ => panic!("variants must be tuple variants with 1 inner type"),
         }
     });
 
     let expanded = quote! {
         impl #name {
-            pub fn try_from_bytes(data: &[u8]) -> Result<Self, Error> {
-                #(#match_arms)*
+            pub const PROGRAM: RawPubkey = RawPubkey(five8_const::decode_32_const(#program_lit));
 
-                Err(Error::InvalidDiscriminator)
+            pub fn raw(self) -> RawInstruction {
+                match self {
+                    #(#match_arms)*
+                }
             }
         }
     };

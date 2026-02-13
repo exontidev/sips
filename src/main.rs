@@ -1,30 +1,23 @@
 use sips::{
     helper::{Amount, Link, RawPubkey},
     instructions::{
-        compute_budget::ComputeUnitPrice,
+        compute_budget::{ComputeBudgetInstruction, ComputeUnitPrice},
         pump::instructions::{PumpCreateV2Instruction, PumpInstruction, PumpMetadata},
         raw_instruction::{Instruction, InstructionWithAccounts},
     },
 };
 
 fn main() {
-    let create = PumpInstruction::CreateV2(InstructionWithAccounts {
-        data: PumpCreateV2Instruction {
-            metadata: PumpMetadata {
-                name: "ObamaCoin".to_string(),
-                symbol: "OBAMA".to_string(),
-                uri: Link("https://shitfuck.org".to_string()),
-            },
+    let priority_fee = ComputeBudgetInstruction::priority_fee(100_000, Amount::from_float(0.1));
 
-            creator: RawPubkey(five8_const::decode_32_const(
-                "9G3oaisiANmLGS16iE4XimVyceqdnRbj8PoPs5RJSu7C",
-            )),
+    let (price_ix, limit_ix): (
+        solana_instruction::Instruction,
+        solana_instruction::Instruction,
+    ) = (
+        priority_fee.price_ix.raw().into(),
+        priority_fee.limit_ix.raw().into(),
+    );
 
-            mayhem: false,
-        },
-
-        accounts: todo!(),
-    });
-
-    dbg!(buy);
+    dbg!(price_ix);
+    dbg!(limit_ix);
 }

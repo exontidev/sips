@@ -4,5 +4,5 @@ mod error;
 pub mod raw_instruction;
 pub mod system_program;
 
-// #[cfg(feature = "pump")]
+#[cfg(feature = "pump")]
 pub mod pump;
