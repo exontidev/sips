@@ -3,7 +3,7 @@ use crate::{
     helper::{Amount, NATIVE_SOL_PRECISION, RawPubkey},
     instructions::{
         error::Error,
-        raw_instruction::{Instruction, InstructionArgs},
+        raw_instruction::{Instruction, InstructionArgs, ProgramAddress},
     },
 };
 use borsh::{BorshDeserialize, BorshSerialize};
@@ -32,27 +32,31 @@ impl ComputeUnitPrice {
 #[derive(Instructions, Debug)]
 #[program("ComputeBudget111111111111111111111111111111")]
 pub enum ComputeBudgetInstruction {
-    SetUnitPrice(Instruction<ComputeUnitPrice>),
-    SetComputeLimit(Instruction<ComputeUnitLimit>),
-}
-
-pub struct PriorityFee {
-    pub price_ix: ComputeBudgetInstruction,
-    pub limit_ix: ComputeBudgetInstruction,
+    SetUnitPrice(Instruction<ComputeUnitPrice, ()>),
+    SetComputeLimit(Instruction<ComputeUnitLimit, ()>),
 }
 
 impl ComputeBudgetInstruction {
-    pub fn priority_fee(compute_limit: u32, fee: Amount<NATIVE_SOL_PRECISION>) -> PriorityFee {
+    pub fn priority_fee(
+        compute_limit: u32,
+        fee: Amount<NATIVE_SOL_PRECISION>,
+    ) -> (
+        Instruction<ComputeUnitPrice, ()>,
+        Instruction<ComputeUnitLimit, ()>,
+    ) {
         let unit_price = fee.raw() as u128 * 1_000_000u128 / compute_limit as u128;
-        PriorityFee {
-            price_ix: ComputeBudgetInstruction::SetUnitPrice(Instruction {
+        (
+            Instruction {
                 data: ComputeUnitPrice { price: unit_price },
-            }),
-            limit_ix: ComputeBudgetInstruction::SetComputeLimit(Instruction {
+                accounts: (),
+            },
+            Instruction {
                 data: ComputeUnitLimit {
                     limit: compute_limit,
                 },
-            }),
-        }
+
+                accounts: (),
+            },
+        )
     }
 }

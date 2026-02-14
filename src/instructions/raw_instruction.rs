@@ -10,32 +10,12 @@ use alloc::vec::Vec;
 use borsh::{BorshDeserialize, BorshSerialize, from_slice};
 
 #[derive(Debug)]
-pub struct Instruction<Args: InstructionArgs> {
-    pub data: Args,
-}
-
-impl<Args> Instruction<Args>
-where
-    Args: InstructionArgs,
-{
-    pub fn into_raw(self, program: RawPubkey) -> RawInstruction {
-        let data = self.data.to_le_bytes();
-
-        RawInstruction {
-            program,
-            data,
-            accounts: alloc::vec![],
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct InstructionWithAccounts<Args: InstructionArgs, Accounts: IntoAccountMetaArray> {
+pub struct Instruction<Args: InstructionArgs, Accounts: IntoAccountMetaArray> {
     pub data: Args,
     pub accounts: Accounts,
 }
 
-impl<Args, Accounts> InstructionWithAccounts<Args, Accounts>
+impl<Args, Accounts> Instruction<Args, Accounts>
 where
     Args: InstructionArgs,
     Accounts: IntoAccountMetaArray,
@@ -49,6 +29,13 @@ where
             data,
             accounts,
         }
+    }
+}
+
+//probably not very good?
+impl IntoAccountMetaArray for () {
+    fn accounts_meta(self) -> alloc::vec::Vec<AccountMeta> {
+        alloc::vec![]
     }
 }
 
@@ -86,9 +73,14 @@ pub trait InstructionArgs: Sized + BorshSerialize + BorshDeserialize {
         let mut data = alloc::vec::Vec::new();
         data.extend_from_slice(Self::DISCRIMINATOR);
 
+        //how the fuck can it panic
         self.serialize(&mut data)
             .expect("Borsh serialization failed");
 
         data
     }
+}
+
+pub trait ProgramAddress {
+    fn program(&self) -> &'static RawPubkey;
 }

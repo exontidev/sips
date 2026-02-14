@@ -8,7 +8,7 @@ use crate::{
         pump::accounts::{
             CloseUserVolumeAccumulatorAccounts, CreateAccounts, CreateV2Accounts, TradeAccounts,
         },
-        raw_instruction::{Instruction, InstructionArgs, InstructionWithAccounts, RawInstruction},
+        raw_instruction::{Instruction, InstructionArgs, ProgramAddress, RawInstruction},
     },
 };
 
@@ -17,15 +17,15 @@ const PUMP_SPL_PRECISION: u8 = 6;
 #[derive(Instructions, Debug)]
 #[program("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P")]
 pub enum PumpInstruction {
-    Create(InstructionWithAccounts<PumpCreateInstruction, CreateAccounts>),
-    CreateV2(InstructionWithAccounts<PumpCreateV2Instruction, CreateV2Accounts>),
+    Create(Instruction<PumpCreateInstruction, CreateAccounts>),
+    CreateV2(Instruction<PumpCreateV2Instruction, CreateV2Accounts>),
 
-    Buy(InstructionWithAccounts<PumpBuyInstruction, TradeAccounts>),
-    BuyExactIn(InstructionWithAccounts<PumpBuyExactSolInInstruction, TradeAccounts>),
+    Buy(Instruction<PumpBuyInstruction, TradeAccounts>),
+    BuyExactIn(Instruction<PumpBuyExactSolInInstruction, TradeAccounts>),
 
-    Sell(InstructionWithAccounts<PumpSellInstruction, TradeAccounts>),
+    Sell(Instruction<PumpSellInstruction, TradeAccounts>),
     CloseAccumulatorAccount(
-        InstructionWithAccounts<CloseUserVolumeAccumulator, CloseUserVolumeAccumulatorAccounts>,
+        Instruction<CloseUserVolumeAccumulator, CloseUserVolumeAccumulatorAccounts>,
     ),
 }
 

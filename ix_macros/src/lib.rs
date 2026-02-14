@@ -46,6 +46,7 @@ pub fn derive_instruction_set(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let name = &input.ident;
 
+    // 1. Extract the Program ID from attributes
     let program_attr = input
         .attrs
         .iter()
@@ -58,26 +59,56 @@ pub fn derive_instruction_set(input: TokenStream) -> TokenStream {
 
     let variants = match &input.data {
         Data::Enum(data_enum) => &data_enum.variants,
-        _ => panic!("InstructionSet can only be derived for enums"),
+        _ => panic!("Instructions can only be derived for enums"),
     };
 
-    let match_arms = variants.iter().map(|variant| {
-        let v = &variant.ident;
-        match &variant.fields {
-            Fields::Unnamed(f) if f.unnamed.len() == 1 => {
-                quote! { Self::#v(ix) => ix.into_raw(Self::PROGRAM), }
-            }
-            _ => panic!("variants must be tuple variants with 1 inner type"),
-        }
-    });
+    // 2. Generate Trait Implementations for each inner Instruction struct
+    // and build the match arms for the From conversion
+    let mut trait_impls = Vec::new();
+    let mut match_arms = Vec::new();
 
+    for variant in variants {
+        let v_ident = &variant.ident;
+
+        // Ensure it's a tuple variant with exactly one field: Variant(InnerType)
+        let inner_type = match &variant.fields {
+            Fields::Unnamed(f) if f.unnamed.len() == 1 => &f.unnamed[0].ty,
+            _ => panic!(
+                "Variant {} must be a tuple variant with 1 inner type",
+                v_ident
+            ),
+        };
+
+        // Implementation of ProgramAddress for the inner struct
+        trait_impls.push(quote! {
+            impl ProgramAddress for #inner_type {
+                fn program(&self) -> &'static RawPubkey {
+                    &#name::PROGRAM
+                }
+            }
+        });
+
+        // Arm for the From<Enum> -> RawInstruction conversion
+        match_arms.push(quote! {
+            #name::#v_ident(ix) => ix.into_raw(#name::PROGRAM)
+        });
+    }
+
+    // 3. Construct the final output
     let expanded = quote! {
+        // Shared constant for the Program ID
         impl #name {
             pub const PROGRAM: RawPubkey = RawPubkey(five8_const::decode_32_const(#program_lit));
+        }
 
-            pub fn raw(self) -> RawInstruction {
-                match self {
-                    #(#match_arms)*
+        // Implement ProgramAddress for every specific instruction struct
+        #(#trait_impls)*
+
+        // Replace .raw() with a standard From conversion
+        impl From<#name> for RawInstruction {
+            fn from(ix_set: #name) -> Self {
+                match ix_set {
+                    #(#match_arms),*
                 }
             }
         }

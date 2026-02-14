@@ -3,16 +3,13 @@ use borsh::{BorshDeserialize, BorshSerialize};
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct Link(pub alloc::string::String);
 
-#[derive(BorshSerialize, BorshDeserialize, Debug)]
+#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
 pub struct RawPubkey(pub [u8; 32]);
 impl RawPubkey {
     pub const fn from_str_const(data: &'static str) -> Self {
         RawPubkey(five8_const::decode_32_const(data))
     }
 }
-pub const DISCRIMINATOR_SIZE: usize = 8;
-#[derive(Debug, PartialEq, Eq, Hash)]
-pub struct AnchorDiscriminator(pub [u8; DISCRIMINATOR_SIZE]);
 
 #[derive(BorshDeserialize)]
 pub struct Time(pub u64);
@@ -41,3 +38,4 @@ impl<const P: u8> Amount<P> {
 }
 
 pub const NATIVE_SOL_PRECISION: u8 = 9;
+pub const LAMPORT_PRECISION: u8 = 6;
