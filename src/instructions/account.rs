@@ -1,4 +1,4 @@
-use crate::helper::RawPubkey;
+use crate::address::Address;
 
 pub trait IntoAccountMetaArray {
     fn accounts_meta(self) -> alloc::vec::Vec<AccountMeta>;
@@ -6,7 +6,7 @@ pub trait IntoAccountMetaArray {
 
 #[derive(Debug)]
 pub struct AccountMeta {
-    pub pubkey: RawPubkey,
+    pub pubkey: Address,
     pub is_signer: bool,
     pub writable: bool,
 }

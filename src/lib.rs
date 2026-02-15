@@ -6,4 +6,6 @@ pub mod instructions;
 pub use ix_macros;
 
 #[cfg(feature = "solana_sdk")]
-pub mod solana_instruction;
+pub mod solana_adapter;
+
+pub mod address;

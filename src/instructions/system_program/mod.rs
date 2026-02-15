@@ -1,4 +1,4 @@
-use crate::helper::RawPubkey;
+use crate::address::Address;
 
 use crate::{
     helper::{Amount, NATIVE_SOL_PRECISION},
@@ -21,7 +21,7 @@ pub struct Transfer {
 pub struct TransferAccounts {
     #[signer]
     #[writable]
-    pub sender: RawPubkey,
+    pub sender: Address,
     #[writable]
-    pub receiver: RawPubkey,
+    pub receiver: Address,
 }

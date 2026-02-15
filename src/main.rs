@@ -1,5 +1,6 @@
 use sips::{
-    helper::{Amount, Link, RawPubkey},
+    address::Address,
+    helper::{Amount, Link},
     instructions::{
         compute_budget::{ComputeBudgetInstruction, ComputeUnitPrice},
         pump::instructions::{PumpCreateV2Instruction, PumpInstruction, PumpMetadata},
@@ -7,14 +8,9 @@ use sips::{
 };
 
 fn main() {
-    let (price_ix, limit_ix) =
-        ComputeBudgetInstruction::priority_fee(100_000, Amount::from_float(0.1));
-
-    let (price_ix, limit_ix): (
-        solana_instruction::Instruction,
-        solana_instruction::Instruction,
-    ) = (price_ix.into(), limit_ix.into());
-
-    dbg!(price_ix);
-    dbg!(limit_ix);
+    let program = Address::from_str_const("ComputeBudget111111111111111111111111111111");
+    let shiet = sips::address::create_program_address(&[], &program).unwrap();
+    let shiet2 = solana_pubkey::Pubkey::create_program_address(&[], &program.into()).unwrap();
+    dbg!(shiet);
+    dbg!(shiet2.as_array());
 }

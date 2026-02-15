@@ -82,7 +82,7 @@ pub fn derive_instruction_set(input: TokenStream) -> TokenStream {
         // Implementation of ProgramAddress for the inner struct
         trait_impls.push(quote! {
             impl ProgramAddress for #inner_type {
-                fn program(&self) -> &'static RawPubkey {
+                fn program(&self) -> &'static Address {
                     &#name::PROGRAM
                 }
             }
@@ -98,7 +98,7 @@ pub fn derive_instruction_set(input: TokenStream) -> TokenStream {
     let expanded = quote! {
         // Shared constant for the Program ID
         impl #name {
-            pub const PROGRAM: RawPubkey = RawPubkey(five8_const::decode_32_const(#program_lit));
+            pub const PROGRAM: Address = Address(five8_const::decode_32_const(#program_lit));
         }
 
         // Implement ProgramAddress for every specific instruction struct

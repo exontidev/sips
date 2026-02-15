@@ -1,5 +1,5 @@
 use crate::{
-    helper::RawPubkey,
+    address::Address,
     instructions::{
         account::{AccountMeta, IntoAccountMetaArray},
         error::Error,
@@ -20,7 +20,7 @@ where
     Args: InstructionArgs,
     Accounts: IntoAccountMetaArray,
 {
-    pub fn into_raw(self, program: RawPubkey) -> RawInstruction {
+    pub fn into_raw(self, program: Address) -> RawInstruction {
         let data = self.data.to_le_bytes();
         let accounts = self.accounts.accounts_meta();
 
@@ -41,7 +41,7 @@ impl IntoAccountMetaArray for () {
 
 #[derive(Debug)]
 pub struct RawInstruction {
-    pub program: RawPubkey,
+    pub program: Address,
     pub data: Vec<u8>,
     pub accounts: Vec<AccountMeta>,
 }
@@ -82,5 +82,5 @@ pub trait InstructionArgs: Sized + BorshSerialize + BorshDeserialize {
 }
 
 pub trait ProgramAddress {
-    fn program(&self) -> &'static RawPubkey;
+    fn program(&self) -> &'static Address;
 }

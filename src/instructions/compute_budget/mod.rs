@@ -1,6 +1,7 @@
 use crate::instructions::raw_instruction::RawInstruction;
 use crate::{
-    helper::{Amount, NATIVE_SOL_PRECISION, RawPubkey},
+    address::Address,
+    helper::{Amount, NATIVE_SOL_PRECISION},
     instructions::{
         error::Error,
         raw_instruction::{Instruction, InstructionArgs, ProgramAddress},

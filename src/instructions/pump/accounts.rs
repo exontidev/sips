@@ -1,4 +1,4 @@
-use crate::helper::RawPubkey;
+use crate::address::Address;
 use crate::instructions::account::{AccountMeta, IntoAccountMetaArray};
 use ix_macros::Accounts;
 
@@ -6,113 +6,114 @@ use ix_macros::Accounts;
 pub struct CreateAccounts {
     #[signer]
     #[writable]
-    pub mint: RawPubkey,
-    pub mint_authority: RawPubkey,
+    pub mint: Address,
+    pub mint_authority: Address,
 
     #[writable]
-    pub bonding_curve: RawPubkey,
+    // #[seeds = b"bonding_curve" + mint]
+    pub bonding_curve: Address,
 
     #[writable]
-    pub associated_bonding_curve: RawPubkey,
+    pub associated_bonding_curve: Address,
 
-    pub global: RawPubkey,
-    pub metaplex_token_metadata_program: RawPubkey,
+    pub global: Address,
+    pub metaplex_token_metadata_program: Address,
 
     #[writable]
-    pub metadata: RawPubkey,
+    pub metadata: Address,
 
     #[signer]
     #[writable]
-    pub user: RawPubkey,
+    pub user: Address,
 
-    pub system_program: RawPubkey,
-    pub token_program: RawPubkey,
-    pub associated_token_program: RawPubkey,
-    pub rent: RawPubkey,
-    pub event_authority: RawPubkey,
-    pub program: RawPubkey,
+    pub system_program: Address,
+    pub token_program: Address,
+    pub associated_token_program: Address,
+    pub rent: Address,
+    pub event_authority: Address,
+    pub program: Address,
 }
 
 #[derive(Accounts, Debug)]
 pub struct CreateV2Accounts {
     #[signer]
     #[writable]
-    pub mint: RawPubkey,
-    pub mint_authority: RawPubkey,
+    pub mint: Address,
+    pub mint_authority: Address,
 
     #[writable]
-    pub bonding_curve: RawPubkey,
+    pub bonding_curve: Address,
 
     #[writable]
-    pub associated_bonding_curve: RawPubkey,
+    pub associated_bonding_curve: Address,
 
-    pub global: RawPubkey,
+    pub global: Address,
 
     #[signer]
     #[writable]
-    pub user: RawPubkey,
+    pub user: Address,
 
-    pub system_program: RawPubkey,
-    pub token_program: RawPubkey,
-    pub associated_token_program: RawPubkey,
-
-    #[writable]
-    pub mayhem_program: RawPubkey,
-
-    pub global_params: RawPubkey,
+    pub system_program: Address,
+    pub token_program: Address,
+    pub associated_token_program: Address,
 
     #[writable]
-    pub sol_vault: RawPubkey,
+    pub mayhem_program: Address,
+
+    pub global_params: Address,
 
     #[writable]
-    pub mayhem_state: RawPubkey,
+    pub sol_vault: Address,
 
     #[writable]
-    pub mayhem_token_vault: RawPubkey,
+    pub mayhem_state: Address,
 
-    pub event_authority: RawPubkey,
+    #[writable]
+    pub mayhem_token_vault: Address,
+
+    pub event_authority: Address,
 }
 
 #[derive(Accounts, Debug)]
 pub struct TradeAccounts {
-    pub global: RawPubkey,
+    pub global: Address,
     #[writable]
-    pub fee_address: RawPubkey,
-    pub mint: RawPubkey,
+    pub fee_address: Address,
+    pub mint: Address,
     #[writable]
-    pub bonding_curve: RawPubkey,
+    pub bonding_curve: Address,
     #[writable]
-    pub associated_bonding_curve: RawPubkey,
+    pub associated_bonding_curve: Address,
     #[writable]
-    pub associated_user: RawPubkey,
+    pub associated_user: Address,
 
     #[signer]
     #[writable]
-    pub user: RawPubkey,
+    pub user: Address,
 
-    pub system_program: RawPubkey,
-    pub token_program: RawPubkey,
-
-    #[writable]
-    pub creator_vault: RawPubkey,
-    pub event_authority: RawPubkey,
-    pub program: RawPubkey,
+    pub system_program: Address,
+    pub token_program: Address,
 
     #[writable]
-    pub global_volume_accumulator: RawPubkey,
+    pub creator_vault: Address,
+    pub event_authority: Address,
+    pub program: Address,
 
     #[writable]
-    pub user_volume_accumulator: RawPubkey,
-    pub fee_config: RawPubkey,
+    pub global_volume_accumulator: Address,
+
+    #[writable]
+    pub user_volume_accumulator: Address,
+    pub fee_config: Address,
 }
 
 #[derive(Accounts, Debug)]
 pub struct CloseUserVolumeAccumulatorAccounts {
     #[signer]
     #[writable]
-    user: RawPubkey,
+    user: Address,
     #[writable]
-    user_volume_accumulator: RawPubkey,
-    event_authority: RawPubkey,
-    program: RawPubkey,
+    user_volume_accumulator: Address,
+    event_authority: Address,
+    program: Address,
 }
