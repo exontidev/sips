@@ -7,7 +7,8 @@ use crate::{
     instructions::{
         error::Error,
         pump::accounts::{
-            CloseUserVolumeAccumulatorAccounts, CreateAccounts, CreateV2Accounts, TradeAccounts,
+            BuyAccounts, CloseUserVolumeAccumulatorAccounts, CreateAccounts, CreateV2Accounts,
+            SellAccounts,
         },
         raw_instruction::{Instruction, InstructionArgs, ProgramAddress, RawInstruction},
     },
@@ -21,77 +22,94 @@ pub enum PumpInstruction {
     Create(Instruction<PumpCreateInstruction, CreateAccounts>),
     CreateV2(Instruction<PumpCreateV2Instruction, CreateV2Accounts>),
 
-    Buy(Instruction<PumpBuyInstruction, TradeAccounts>),
-    BuyExactIn(Instruction<PumpBuyExactSolInInstruction, TradeAccounts>),
+    Buy(Instruction<PumpBuyInstruction, BuyAccounts>),
+    BuyExactIn(Instruction<PumpBuyExactSolInInstruction, BuyAccounts>),
 
-    Sell(Instruction<PumpSellInstruction, TradeAccounts>),
+    Sell(Instruction<PumpSellInstruction, SellAccounts>),
     CloseAccumulatorAccount(
         Instruction<CloseUserVolumeAccumulator, CloseUserVolumeAccumulatorAccounts>,
     ),
 }
-
+// todo probably better to remove cloning
 impl PumpInstruction {
     pub fn create(
         metadata: PumpMetadata,
+        mint: Address,
         creator: Address,
     ) -> Instruction<PumpCreateInstruction, CreateAccounts> {
         Instruction {
-            data: PumpCreateInstruction { metadata, creator },
-            accounts: todo!(),
+            data: PumpCreateInstruction {
+                metadata,
+                creator: creator.clone(),
+            },
+            accounts: CreateAccounts::new(mint, creator),
         }
     }
 
     pub fn create_v2(
         metadata: PumpMetadata,
+        mint: Address,
         creator: Address,
         mayhem: bool,
     ) -> Instruction<PumpCreateV2Instruction, CreateV2Accounts> {
         Instruction {
             data: PumpCreateV2Instruction {
                 metadata,
-                creator,
+                creator: creator.clone(),
                 mayhem,
             },
-            accounts: todo!(),
+            accounts: CreateV2Accounts::new(mint, creator),
         }
     }
 
     pub fn buy(
+        mint: Address,
+        user: Address,
+        creator: Address,
+        token_program: Address,
         token_amout: Amount<PUMP_SPL_PRECISION>,
         maximum_sol_spent: Amount<NATIVE_SOL_PRECISION>,
-    ) -> Instruction<PumpBuyInstruction, TradeAccounts> {
+    ) -> Instruction<PumpBuyInstruction, BuyAccounts> {
         Instruction {
             data: PumpBuyInstruction {
                 spl_amount: token_amout,
                 maximum_sol_input: maximum_sol_spent,
             },
-            accounts: todo!(),
+            accounts: BuyAccounts::new(mint, user, creator, token_program),
         }
     }
 
     pub fn buy_exact_in(
+        mint: Address,
+        user: Address,
+        creator: Address,
+        token_program: Address,
         sol: Amount<NATIVE_SOL_PRECISION>,
         minimum_token_output: Amount<PUMP_SPL_PRECISION>,
-    ) -> Instruction<PumpBuyExactSolInInstruction, TradeAccounts> {
+    ) -> Instruction<PumpBuyExactSolInInstruction, BuyAccounts> {
         Instruction {
             data: PumpBuyExactSolInInstruction {
                 sol_amount: sol,
                 minimum_token_output: minimum_token_output,
             },
-            accounts: todo!(),
+            accounts: BuyAccounts::new(mint, user, creator, token_program),
         }
     }
 
     pub fn sell(
+        mint: Address,
+        user: Address,
+        creator: Address,
+        token_program: Address,
         token_amount: Amount<PUMP_SPL_PRECISION>,
         minimum_sol_payout: Amount<NATIVE_SOL_PRECISION>,
-    ) -> Instruction<PumpSellInstruction, TradeAccounts> {
+    ) -> Instruction<PumpSellInstruction, SellAccounts> {
         Instruction {
             data: PumpSellInstruction {
                 spl_amount: token_amount,
                 minimum_sol_payout,
             },
-            accounts: todo!(),
+            accounts: SellAccounts::new(mint, user, creator, token_program),
         }
     }
 }

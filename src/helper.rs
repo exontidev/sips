@@ -1,5 +1,7 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 
+use crate::address::Address;
+
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct Link(pub alloc::string::String);
 
@@ -31,3 +33,14 @@ impl<const P: u8> Amount<P> {
 
 pub const NATIVE_SOL_PRECISION: u8 = 9;
 pub const LAMPORT_PRECISION: u8 = 6;
+
+// move later in ata folder
+const ATA_PROGRAM: Address =
+    Address::from_str_const("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
+
+pub fn ata(address: &Address, token_program: &Address, mint: &Address) -> (Address, u8) {
+    Address::pda(
+        &ATA_PROGRAM,
+        &[address.as_ref(), token_program.as_ref(), mint.as_ref()],
+    )
+}
